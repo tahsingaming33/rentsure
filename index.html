@@ -160,6 +160,7 @@ nav.links a:hover{color:var(--ink)}
 .ac li svg{position:static!important;transform:none!important;flex:none;width:18px;height:18px;margin-top:2px;color:var(--muted)}
 .ac b{display:block;font:600 15px var(--body);color:var(--ink)}
 .ac small{display:block;font-size:13px;color:var(--muted);margin-top:1px}
+.ac mark{background:none;color:var(--accent);font-weight:700}
 .ac .ac-note{cursor:default;font-size:12.5px;color:var(--muted);padding:8px 12px}
 .rs-pin{width:28px!important;height:28px!important;margin:-28px 0 0 -14px!important;background:none;border:0}
 .rs-pin span{display:block;width:28px;height:28px;border-radius:50% 50% 50% 0;background:#0F4C4A;transform:rotate(-45deg);border:3px solid #7FC4BB;box-shadow:0 3px 8px rgba(0,0,0,.35)}
@@ -411,7 +412,7 @@ footer .cols b{display:block;color:var(--ink);font-size:12.5px;letter-spacing:.1
               <span class="errmsg" aria-live="polite"></span>
             </div>
           </div>
-          <input id="company" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+          <input id="rs_hp" name="rs_hp_x9" tabindex="-1" autocomplete="nope" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <div class="field">
             <label for="notes" data-i18n="notes">Anything else? (optional)</label>
             <textarea id="notes" rows="2" data-i18n-ph="notes_ph" placeholder="Flight number, child seat, stops on the way…"></textarea>
@@ -628,39 +629,78 @@ function initMap(){
 $('#pin-toggle').addEventListener('click',()=>{ const p=$('#pin-panel'); p.hidden=!p.hidden; $('#pin-toggle').setAttribute('aria-expanded',String(!p.hidden)); if(!p.hidden){ initMap(); setTimeout(()=>map&&map.invalidateSize(),50); } });
 $('#locate').addEventListener('click',()=>{ if(!navigator.geolocation){ toast(t('loc_fail')); return; } navigator.geolocation.getCurrentPosition(p=>{setPin(p.coords.latitude,p.coords.longitude,16); fillFromPin(p.coords.latitude,p.coords.longitude,true);},()=>toast(t('loc_fail')),{enableHighAccuracy:true,timeout:10000}); });
 
-/* place suggestions: Photon (OpenStreetMap data), limited to Bangladesh, biased to Dhaka */
+const GZ=[["Uttara Sector 1",23.8712,90.399],["Uttara Sector 3",23.8642,90.3962],["Uttara Sector 4",23.866,90.404],["Uttara Sector 5",23.8635,90.3903],["Uttara Sector 6",23.8737,90.4009],["Uttara Sector 7",23.87,90.3973],["Uttara Sector 9",23.8774,90.3982],["Uttara Sector 10",23.8823,90.3894],["Uttara Sector 11",23.8774,90.3905],["Uttara Sector 12",23.8775,90.378],["Uttara Sector 13",23.8735,90.3855],["Uttara Sector 14",23.8672,90.3895],["Uttara Sector 15",23.883,90.37],["Uttara Sector 17",23.889,90.356],["Uttara Sector 18",23.868,90.355],["Mirpur 1",23.7957,90.3537],["Mirpur 2",23.805,90.361],["Mirpur 6",23.813,90.359],["Mirpur 10",23.8069,90.3687],["Mirpur 11",23.818,90.366],["Mirpur 12",23.828,90.364],["Mirpur 13",23.804,90.378],["Mirpur 14",23.798,90.386],["Mirpur DOHS",23.836,90.37],["Pallabi",23.824,90.36],["Kazipara",23.7985,90.373],["Shewrapara",23.7905,90.3755],["Agargaon",23.778,90.378],["Mohakhali",23.778,90.4],["Mohakhali DOHS",23.784,90.396],["Banani",23.7937,90.4066],["Banani DOHS",23.8,90.397],["Gulshan",23.7925,90.4078],["Gulshan 1",23.7808,90.4167],["Gulshan 2",23.7948,90.4143],["Niketan",23.7735,90.412],["Baridhara",23.803,90.422],["Baridhara DOHS",23.811,90.414],["Bashundhara Residential Area",23.8193,90.4526],["Badda",23.78,90.427],["Merul Badda",23.77,90.425],["Notun Bazar",23.798,90.424],["Vatara",23.805,90.432],["Kuril",23.82,90.421],["Rampura",23.761,90.421],["Banasree",23.763,90.437],["Aftabnagar",23.769,90.443],["Khilgaon",23.752,90.425],["Malibagh",23.748,90.413],["Mouchak",23.747,90.412],["Moghbazar",23.749,90.404],["Shantinagar",23.74,90.412],["Kakrail",23.738,90.406],["Motijheel",23.733,90.418],["Paltan",23.7345,90.413],["Gulistan",23.724,90.413],["Sadarghat",23.706,90.41],["Lalbagh",23.719,90.388],["Chawkbazar",23.7175,90.397],["Azimpur",23.727,90.385],["New Market",23.733,90.385],["Dhanmondi",23.7461,90.3742],["Jigatola",23.74,90.374],["Kalabagan",23.747,90.382],["Panthapath",23.752,90.387],["Kawran Bazar",23.751,90.393],["Farmgate",23.757,90.388],["Tejgaon",23.764,90.392],["Tejgaon Industrial Area",23.771,90.402],["Shahbag",23.738,90.396],["Ramna",23.738,90.4],["Segunbagicha",23.733,90.406],["Mohammadpur",23.766,90.358],["Lalmatia",23.757,90.368],["Shyamoli",23.774,90.365],["Adabor",23.774,90.355],["Kallyanpur",23.78,90.361],["Gabtoli",23.783,90.344],["Dhaka Cantonment",23.82,90.4],["Kurmitola",23.825,90.409],["Khilkhet",23.831,90.422],["Nikunja 1",23.833,90.417],["Nikunja 2",23.835,90.422],["Uttarkhan",23.873,90.435],["Dakshinkhan",23.858,90.425],["Tongi",23.899,90.405],["Abdullahpur",23.88,90.4],["Diabari",23.879,90.362],["Purbachal",23.845,90.505],["Jatrabari",23.71,90.435],["Sayedabad",23.719,90.427],["Demra",23.72,90.48],["Kamrangirchar",23.715,90.365],["Hazaribagh",23.735,90.365],["Keraniganj",23.699,90.345],["Mugda",23.73,90.43],["Basabo",23.738,90.432],["Sabujbagh",23.735,90.43],["Shahjahanpur",23.742,90.422],["Wari",23.718,90.42],["Sutrapur",23.71,90.415],["Shyampur",23.693,90.435],["Bhashantek",23.815,90.388],["Matikata",23.813,90.395],["Manikdi",23.823,90.392],["Hatirjheel",23.757,90.404],["Eskaton",23.747,90.4],["Bangla Motor",23.747,90.395],["Elephant Road",23.738,90.385],["Science Lab",23.739,90.383],["Nilkhet",23.733,90.386],["Palashi",23.728,90.389],["Bakshibazar",23.723,90.395],["Siddeshwari",23.742,90.408],["Arambagh",23.731,90.421],["Fakirapool",23.734,90.417],["Kamalapur",23.732,90.426],["Savar",23.8583,90.2667],["Ashulia",23.895,90.32],["Narayanganj",23.6238,90.5],["Gazipur",23.9999,90.4203],["Dhaka Airport (Hazrat Shahjalal International)",23.8434,90.3978,"top"],["Airport Terminal 3 (Shahjalal)",23.847,90.4],["Kamalapur Railway Station",23.7322,90.4264],["Airport Railway Station",23.851,90.408],["Sayedabad Bus Terminal",23.719,90.429],["Mohakhali Bus Terminal",23.779,90.4],["Gabtoli Bus Terminal",23.784,90.344],["Sadarghat Launch Terminal",23.705,90.411],["Bashundhara City Shopping Mall",23.751,90.391],["Jamuna Future Park",23.813,90.424],["Dhaka Medical College Hospital",23.7255,90.3975],["Square Hospital",23.753,90.381],["Evercare Hospital Dhaka",23.81,90.431],["United Hospital",23.804,90.415],["National Stadium",23.7275,90.413],["Dhaka University",23.734,90.393],["BUET",23.7265,90.3925],["North South University",23.815,90.425],["Gulshan Avenue",23.79,90.415],["Kemal Ataturk Avenue",23.794,90.404],["Pragati Sarani (Progoti Sarani)",23.795,90.424],["Airport Road",23.81,90.408],["Mirpur Road",23.752,90.378],["Satmasjid Road",23.748,90.37],["Begum Rokeya Sarani",23.785,90.373],["300 Feet Road (Purbachal Expressway)",23.828,90.47],["Cox's Bazar",21.4272,92.0058,"city"],["Sylhet",24.8949,91.8687,"city"],["Sreemangal",24.3065,91.7296,"city"],["Chittagong (Chattogram)",22.3569,91.7832,"city"],["Bandarban",22.1953,92.2184,"city"],["Rangamati",22.6574,92.1735,"city"],["Sajek Valley",23.382,92.2938,"city"],["Khulna",22.8456,89.5403,"city"],["Rajshahi",24.3745,88.6042,"city"],["Kuakata",21.8167,90.1222,"city"],["Comilla (Cumilla)",23.4607,91.1809,"city"],["Mymensingh",24.7471,90.4203,"city"],["Barisal (Barishal)",22.701,90.3535,"city"],["Bogura",24.8465,89.3773,"city"],["Rangpur",25.7439,89.2752,"city"],["Noakhali",22.8696,91.0995,"city"],["Feni",23.0159,91.3976,"city"],["Tangail",24.2513,89.9167,"city"],["Jessore (Jashore)",23.1664,89.2081,"city"],["Teknaf",20.8624,92.3058,"city"],["Kushtia",23.9013,89.12,"city"],["Pabna",24.0064,89.2372,"city"],["Sirajganj",24.4534,89.7007,"city"],["Jamalpur",24.9375,89.937,"city"],["Narsingdi",23.9322,90.7151,"city"],["Munshiganj",23.5422,90.5305,"city"],["Manikganj",23.8617,90.0003,"city"],["Chandpur",23.2333,90.6667,"city"],["Brahmanbaria",23.9571,91.1119,"city"],["Habiganj",24.3745,91.4155,"city"],["Moulvibazar",24.4829,91.7774,"city"],["Sunamganj",25.0658,91.395,"city"],["Dinajpur",25.6217,88.6354,"city"],["Bhola",22.6859,90.6482,"city"],["Patuakhali",22.3596,90.3299,"city"],["Gopalganj",23.005,89.8266,"city"],["Faridpur",23.607,89.8429,"city"],["Kishoreganj",24.4449,90.7766,"city"],["Netrokona",24.8835,90.7279,"city"]];
+
+/* place suggestions, Uber-style: instant built-in Dhaka address engine + OpenStreetMap search (Photon) for shops, buildings and roads */
 const PIN_SVG='<svg aria-hidden="true"><use href="#i-pin"/></svg>';
+const BN_DIGITS='০১২৩৪৫৬৭৮৯';
+const BN_WORDS={'উত্তরা':'uttara','মিরপুর':'mirpur','গুলশান':'gulshan','বনানী':'banani','ধানমন্ডি':'dhanmondi','মোহাম্মদপুর':'mohammadpur','বসুন্ধরা':'bashundhara','বাড্ডা':'badda','মতিঝিল':'motijheel','ফার্মগেট':'farmgate','বিমানবন্দর':'airport','এয়ারপোর্ট':'airport','খিলগাঁও':'khilgaon','রামপুরা':'rampura','মালিবাগ':'malibagh','মগবাজার':'moghbazar','তেজগাঁও':'tejgaon','মহাখালী':'mohakhali','বারিধারা':'baridhara','যাত্রাবাড়ী':'jatrabari','সাভার':'savar','টঙ্গী':'tongi','আজিমপুর':'azimpur','লালবাগ':'lalbagh','সেক্টর':'sector','রোড':'road','বাড়ি':'house','বাসা':'house','ব্লক':'block','লেন':'lane'};
+function normQ(q){ q=String(q).replace(/[০-৯]/g,d=>BN_DIGITS.indexOf(d)); Object.entries(BN_WORDS).forEach(([b,e])=>{ q=q.split(b).join(' '+e+' '); });
+  return q.toLowerCase().replace(/[#,./()-]/g,' ').replace(/\bsec\b/g,'sector').replace(/\b(rd)\b/g,'road').replace(/\bblk\b/g,'block').replace(/\bh\b(?=\s*\d)/g,'house').replace(/\br\/a\b/g,' ').replace(/\s+/g,' ').trim(); }
+const GZN=GZ.map(g=>({name:g[0],lat:g[1],lng:g[2],kind:g[3]||'area',n:normQ(g[0]),w:normQ(g[0]).split(' ')}));
+function localPlaces(raw){
+  let q=normQ(raw); if(q.length<2) return [];
+  const parts=[]; const grab=(re,label)=>{ const m=q.match(re); if(m){ parts.push(label+' '+m[2].toUpperCase().replace(/^0+(?=\d)/,'')); q=q.replace(m[0],' '); } };
+  grab(/\b(house|holding)\s*(\w+)/,'House'); grab(/\b(road|street)\s*(\d+[a-z]?)\b/,'Road'); grab(/\b(lane)\s*(\d+[a-z]?)\b/,'Lane'); grab(/\b(block)\s*([a-z])\b/,'Block');
+  const sec=q.match(/\bsector\s*(\d+)\b/); if(sec){ q=q.replace(sec[0],' ')+' uttara sector '+sec[1]; }
+  const words=q.replace(/\s+/g,' ').trim().split(' ').filter(Boolean);
+  const label=parts.map(p=>p.replace(/^House (\w+)$/,'House $1').replace(/^Block /,'Block ')).join(', ');
+  if(!words.length) return [];
+  const scored=[];
+  GZN.forEach(g=>{ let score=0; for(const w of words){ const i=g.w.findIndex(x=>x.startsWith(w)); if(i<0){ if(!g.n.includes(w)) return; score+=1; } else score+= (i===0?4:2) + (g.w[i]===w?2:0); }
+    if(sec && !g.n.endsWith(' '+sec[1])) return;
+    if(parts.length && /mall|hospital|station|terminal|university|stadium|airport|buet|park/.test(g.n)) return;
+    score -= g.w.length*0.3; if(g.kind==='top') score+=3; scored.push([score,g]); });
+  scored.sort((a,b)=>b[0]-a[0]);
+  const best=scored.length?scored[0][0]:0; return scored.filter(x=>!label||x[0]>=best-1).slice(0,label?2:4).map(([,g])=>({main: label? label : g.name, sub: label? `${g.name}, Dhaka` : (g.kind==='city'?'Bangladesh':'Dhaka'), lat:g.lat, lng:g.lng, local:true}));
+}
 function placeLabel(p){ const q=p.properties||{}; const main=q.name||[q.housenumber,q.street].filter(Boolean).join(' ')||q.city||'';
   const sub=[q.street&&q.name?q.street:'',q.district||q.locality||'',q.city||q.county||'',q.state&&q.state!==q.city?q.state:''].filter((v,i,a)=>v&&v!==main&&a.indexOf(v)===i).join(', ');
-  return {main,sub}; }
+  return {main,sub,lat:p.geometry.coordinates[1],lng:p.geometry.coordinates[0]}; }
 function fillFromPin(lat,lng,force){ const f=$('#from'); if(f.value.trim()&&!force) return;
   fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}&limit=1`).then(r=>r.json()).then(j=>{ const p=j.features&&j.features[0]; if(!p) return; const l=placeLabel(p); f.value=[l.main,l.sub].filter(Boolean).join(', '); store(); update(); }).catch(()=>{}); }
+function esc(v){ return String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function hl(text,q){ const w=normQ(q).split(' ').filter(x=>x.length>1); let out=esc(text); w.forEach(x=>{ out=out.replace(new RegExp('('+x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>'); }); return out; }
+const geoCache=new Map();
 function autocomplete(id,onPick){
-  const inp=$('#'+id), list=$('#ac-'+id); let timer=null, ctl=null, items=[], idx=-1;
+  const inp=$('#'+id), list=$('#ac-'+id); let timer=null, ctl=null, items=[], idx=-1, seq=0;
   const close=()=>{ list.hidden=true; inp.setAttribute('aria-expanded','false'); idx=-1; };
-  const render=()=>{ list.innerHTML = items.length? items.map((p,i)=>{ const l=placeLabel(p); return `<li role="option" id="${id}-o${i}" aria-selected="${i===idx}">${PIN_SVG}<span><b>${esc(l.main)}</b>${l.sub?`<small>${esc(l.sub)}</small>`:''}</span></li>`; }).join('') : `<li class="ac-note">${t('ac_none')}</li>`;
+  const render=(loading)=>{ const q=inp.value;
+    list.innerHTML = items.length? items.map((p,i)=>`<li role="option" id="${id}-o${i}" aria-selected="${i===idx}">${PIN_SVG}<span><b>${hl(p.main,q)}</b>${p.sub?`<small>${esc(p.sub)}</small>`:''}</span></li>`).join('') + (loading?'<li class="ac-note">…</li>':'')
+      : `<li class="ac-note">${loading?'…':t('ac_none')}</li>`;
     list.hidden=false; inp.setAttribute('aria-expanded','true'); inp.setAttribute('aria-activedescendant', idx>=0? `${id}-o${idx}` : ''); };
-  const pick=i=>{ const p=items[i]; if(!p) return; const l=placeLabel(p); inp.value=[l.main,l.sub].filter(Boolean).join(', '); const [lng,lat]=p.geometry.coordinates; close(); onPick(lat,lng); store(); update(); };
-  inp.addEventListener('input',()=>{ clearTimeout(timer); const q=inp.value.trim(); if(q.length<2){ close(); return; }
-    timer=setTimeout(()=>{ if(ctl) ctl.abort(); ctl=new AbortController();
-      fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=23.8103&lon=90.4125&limit=6&bbox=88.0,20.5,92.8,26.7`,{signal:ctl.signal})
-        .then(r=>r.json()).then(j=>{ items=(j.features||[]); idx=-1; if(document.activeElement===inp) render(); }).catch(()=>{}); },250); });
+  const merge=(local,remote)=>{ const seen=new Set(); const out=[];
+    [...local,...remote].forEach(p=>{ const k=(p.main+'|'+p.sub).toLowerCase(); if(!p.main||seen.has(k)) return; seen.add(k); out.push(p); }); return out.slice(0,8); };
+  const pick=i=>{ const p=items[i]; if(!p) return; inp.value=[p.main,p.sub].filter(Boolean).join(', '); close(); onPick(p.lat,p.lng); store(); update(); };
+  const search=()=>{ const q=inp.value.trim(); if(q.length<2){ close(); return; }
+    const local=localPlaces(q); items=merge(local,[]); idx=-1; render(true);
+    clearTimeout(timer); const my=++seq;
+    timer=setTimeout(()=>{ const key=normQ(q);
+      const done=feats=>{ if(my!==seq) return; const remote=feats.map(placeLabel).filter(p=>p.main);
+        remote.sort((a,b)=>{ const d=p=>Math.hypot(p.lat-23.8103,p.lng-90.4125); return d(a)-d(b); });
+        items=merge(local,remote); if(document.activeElement===inp) render(false); };
+      if(geoCache.has(key)){ done(geoCache.get(key)); return; }
+      if(ctl) ctl.abort(); ctl=new AbortController();
+      fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=23.8103&lon=90.4125&zoom=12&location_bias_scale=0.2&limit=10&bbox=88.0,20.5,92.8,26.7`,{signal:ctl.signal})
+        .then(r=>r.json()).then(j=>{ const f=j.features||[]; geoCache.set(key,f); done(f); }).catch(e=>{ if(e.name!=='AbortError') done([]); }); },180); };
+  inp.addEventListener('input',search);
+  inp.addEventListener('focus',()=>{ if(inp.value.trim().length>=2) search(); });
   inp.addEventListener('keydown',e=>{ if(list.hidden||!items.length) return;
-    if(e.key==='ArrowDown'){ e.preventDefault(); idx=(idx+1)%items.length; render(); }
-    else if(e.key==='ArrowUp'){ e.preventDefault(); idx=(idx-1+items.length)%items.length; render(); }
+    if(e.key==='ArrowDown'){ e.preventDefault(); idx=(idx+1)%items.length; render(false); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); idx=(idx-1+items.length)%items.length; render(false); }
     else if(e.key==='Enter'&&idx>=0){ e.preventDefault(); pick(idx); }
     else if(e.key==='Escape'){ close(); } });
   list.addEventListener('mousedown',e=>{ const li=e.target.closest('li[role=option]'); if(!li) return; e.preventDefault(); pick(+li.id.split('-o')[1]); });
-  inp.addEventListener('blur',()=>setTimeout(close,120));
+  inp.addEventListener('blur',()=>setTimeout(close,150));
 }
-function esc(v){ return String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 autocomplete('from',(lat,lng)=>{ const p=$('#pin-panel'); if(p.hidden){ p.hidden=false; $('#pin-toggle').setAttribute('aria-expanded','true'); } initMap(); setTimeout(()=>{ if(map){ map.invalidateSize(); } setPin(lat,lng,16); },60); });
 autocomplete('to',(lat,lng)=>{ state.dest={lat,lng}; });
 $('#to').addEventListener('input',()=>{ state.dest=null; });
 
 function saveQuote(){ if(!QUOTE_ENDPOINT) return; const v=VEHICLES.find(x=>x.id===state.veh);
-  const row={lang:state.lang,trip:state.trip,from:$('#from').value.trim(),to:$('#to').value.trim(),pin:pinLink(),start:$('#start').value,end:state.trip==='airport'?'':$('#end').value,time:$('#time').value,passengers:state.pax,bags:state.bags,vehicle:v.en,name:$('#name').value.trim(),phone:$('#phone').value.trim(),notes:$('#notes').value.trim(),source:leadSource(),device:/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',company:$('#company').value};
-  try{ fetch(QUOTE_ENDPOINT,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).catch(()=>{}); }catch(e){} }
+  const row={lang:state.lang,trip:state.trip,from:$('#from').value.trim(),to:$('#to').value.trim(),pin:pinLink(),start:$('#start').value,end:state.trip==='airport'?'':$('#end').value,time:$('#time').value,passengers:state.pax,bags:state.bags,vehicle:v.en,name:$('#name').value.trim(),phone:$('#phone').value.trim(),notes:$('#notes').value.trim(),source:leadSource(),device:/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',rs_hp:$('#rs_hp').value};
+  const body=JSON.stringify(row); const beacon=()=>{ try{ return navigator.sendBeacon && navigator.sendBeacon(QUOTE_ENDPOINT,new Blob([body],{type:'application/json'})); }catch(e){ return false; } };
+  try{ fetch(QUOTE_ENDPOINT,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body}).then(r=>{ if(!r.ok && r.status!==400) beacon(); }).catch(()=>beacon()); }catch(e){ beacon(); } }
 function leadSource(){
   try{ const u=new URLSearchParams(location.search).get('utm_source'); if(u) return u.toLowerCase().slice(0,40); }catch(e){}
   if(/FBAN|FBAV|FB_IAB|Instagram/i.test(navigator.userAgent)) return 'facebook';

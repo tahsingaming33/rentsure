@@ -538,7 +538,7 @@ async function signIn(pw){
     quotes = j.quotes || []; lastLoad = Date.now();
     try { sessionStorage.setItem('rs-admin', pw); } catch(e){}
     showApp(); render();
-    clearInterval(timer); timer = setInterval(() => { if (!document.hidden) load(true); }, 60000);
+    clearInterval(timer); timer = setInterval(() => { if (!document.hidden) load(true); }, 10000);
   } catch(e){
     $('#login-err').textContent = e.status === 401 ? 'Wrong password. Try again.' : (e.message || 'Could not reach the server.');
   } finally { $('#login-btn').disabled = false; }
@@ -555,6 +555,8 @@ $('#q').addEventListener('input', e => { view.q = e.target.value; shown = 25; re
 let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (!$('#app-view').hidden) renderDaily(); }, 150); });
 $('#f-trip').addEventListener('change', e => { view.trip = e.target.value; renderRows(); });
 $('#f-sort').addEventListener('change', e => { view.sort = e.target.value; renderRows(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && mode === 'live') load(true); });
+window.addEventListener('focus', () => { if (mode === 'live') load(true); });
 setInterval(() => { if (mode === 'live' && lastLoad) $('#updated').textContent = 'Updated '+ago(new Date(lastLoad).toISOString()); }, 30000);
 
 (function boot(){

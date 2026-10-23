@@ -52,11 +52,11 @@ function authed(req) {
 
 async function create(req, res) {
   const b = body(req);
-  if (b.company) return res.status(200).json({ ok: true }); // honeypot: bots fill hidden fields
+  if (b.rs_hp) return res.status(200).json({ ok: true }); // honeypot: bots fill hidden fields (renamed so browser autofill can't trip it)
 
   const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
   const [hits] = await redis([['INCR', `rl:${ip}`], ['EXPIRE', `rl:${ip}`, 600, 'NX']]);
-  if (hits > 8) return res.status(429).json({ error: 'Too many requests. Please message us on WhatsApp.' });
+  if (hits > 30) return res.status(429).json({ error: 'Too many requests. Please message us on WhatsApp.' });
 
   const q = {
     trip: TRIPS.includes(b.trip) ? b.trip : 'city',
