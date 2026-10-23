@@ -1,26 +1,22 @@
-# Rentsure website + admin
+# Rentsure
 
-- `index.html`: the public website with the booking form. Customers send their request on WhatsApp and a copy is saved for you.
-- `admin/index.html`: your dashboard at `yourdomain.com/admin`.
-- `api/quotes.js`: the small server that saves and reads requests (Vercel function).
+- Website: https://rentsurebd.vercel.app
+- Admin: https://rentsurebd.vercel.app/admin
+- Every push to `main` goes live automatically on Vercel in about a minute.
 
-## Put it online (about 10 minutes)
+## Daily use
+1. A customer fills the form and taps the WhatsApp button. You get their WhatsApp message, and a copy is saved in the admin.
+2. Open the admin, tap the request, tap **Reply on WhatsApp**.
+3. Move it along: New > Contacted > Quoted (add the price) > Booked or Lost. Add notes like driver name or advance paid.
+4. Booked trips show under "Upcoming booked trips". Export everything with **Export CSV**.
 
-1. **GitHub:** create a new repo (private is fine) and upload everything in this folder, keeping the folders as they are.
-2. **Vercel:** sign in with GitHub, click **Add New > Project**, pick the repo, click **Deploy**. No settings needed.
-3. **Database:** in the Vercel project open **Storage**, click **Create Database**, choose **Upstash for Redis** (free plan), and connect it to this project. Vercel adds the database keys for you.
-4. **Admin password:** in **Settings > Environment Variables** add `ADMIN_PASSWORD` with a long password only you know.
-5. **Redeploy:** go to **Deployments**, open the menu on the latest one, click **Redeploy** so the new settings load.
-6. Open `your-site.vercel.app/admin` and sign in. Then submit a test request on the website and watch it appear.
+Tip: open the admin on your phone and use "Add to Home Screen". It opens like an app.
 
-## Before going live
-
-- Replace the sample WhatsApp number `01940295660` / `8801940295660` in `index.html` (search for it, it appears a few times, including the `WA` constant in the script).
-- Custom domain: Vercel project > **Settings > Domains**.
+## Setup (done)
+- Hosting: Vercel project `rentsure`, linked to this repo.
+- Database: Upstash for Redis (free plan), connected in Vercel Storage.
+- `ADMIN_PASSWORD`: set in Vercel > Settings > Environment Variables. Change it there, then redeploy.
 
 ## Notes
-
-- The map pin needs the real hosted site. In the Claude preview it falls back to pasting a Google Maps link.
-- Requests are also never lost if saving fails: the customer's WhatsApp message always goes through.
-- Spam protection: a hidden honeypot field and a limit of 8 requests per 10 minutes per visitor.
-- To change the password, edit `ADMIN_PASSWORD` in Vercel and redeploy.
+- Spam protection: hidden honeypot field and max 8 requests per 10 minutes per visitor.
+- WhatsApp number used on the site: 01940295660 (sample). Replace in `index.html` when the real number is ready.
