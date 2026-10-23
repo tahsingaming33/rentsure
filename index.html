@@ -143,26 +143,23 @@ nav.links a:hover{color:var(--ink)}
 .pin-status{font-size:13px;color:var(--wa);font-weight:600}
 .pin-panel{display:flex;flex-direction:column;gap:8px}
 .map-wrap{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
-#map{height:220px;background:var(--chip)}
+#map{height:300px;background:#E8EEF0}
 .locate{position:absolute;right:10px;bottom:10px;z-index:1000;border:0;border-radius:999px;background:var(--surface);color:var(--ink);font:600 13px var(--body);padding:8px 12px;box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer}
 .pin-help{font-size:13px;color:var(--muted)}
 .pin-fallback{display:flex;flex-direction:column;gap:8px}
 .pin-fallback .btn{padding:10px 14px;font-size:14px}
-.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-layer{position:absolute;left:0;top:0}
-.leaflet-container{overflow:hidden;outline:0;font:12px var(--body);-webkit-tap-highlight-color:transparent}
-.leaflet-container img.leaflet-tile{max-width:none!important;max-height:none!important;width:256px;height:256px;padding:0;user-select:none}
-.leaflet-tile{visibility:hidden}.leaflet-tile-loaded{visibility:inherit}
-.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-marker-pane{z-index:600}.leaflet-popup-pane{z-index:700}
-.leaflet-zoom-animated{transform-origin:0 0}
-.leaflet-zoom-anim .leaflet-zoom-animated{transition:transform .25s cubic-bezier(0,0,.25,1)}
-.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none}.leaflet-top{top:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}.leaflet-right{right:0}
-.leaflet-control{position:relative;z-index:800;pointer-events:auto;float:left;clear:both}.leaflet-right .leaflet-control{float:right}
-.leaflet-top .leaflet-control{margin-top:10px}.leaflet-left .leaflet-control{margin-left:10px}.leaflet-bottom .leaflet-control{margin-bottom:0}
-.leaflet-bar{border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.leaflet-bar a{display:block;width:32px;height:32px;line-height:32px;text-align:center;background:#fff;color:#0B1F1D;text-decoration:none;font:600 18px var(--body);border-bottom:1px solid #ddd}
-.leaflet-control-attribution{background:rgba(255,255,255,.85);color:#333;font-size:10px;padding:0 5px}
-.leaflet-control-attribution a{color:#0F4C4A}
-.leaflet-grab{cursor:grab}.leaflet-dragging .leaflet-grab{cursor:grabbing}
+.leaflet-container{font:12px var(--body);background:#E8EEF0}
+.leaflet-bar{border:0!important;border-radius:10px!important;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.18)!important}
+.leaflet-bar a{width:34px!important;height:34px!important;line-height:34px!important;color:#0B1F1D!important;font:600 18px var(--body)!important}
+.leaflet-control-attribution{font-size:10px}
+.ac{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:1200;margin:0;padding:6px;list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 34px rgba(7,38,36,.22);max-height:320px;overflow:auto}
+.ac[hidden]{display:none}
+.ac li{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:12px;cursor:pointer}
+.ac li[aria-selected="true"],.ac li:hover{background:var(--chip)}
+.ac li svg{position:static!important;transform:none!important;flex:none;width:18px;height:18px;margin-top:2px;color:var(--muted)}
+.ac b{display:block;font:600 15px var(--body);color:var(--ink)}
+.ac small{display:block;font-size:13px;color:var(--muted);margin-top:1px}
+.ac .ac-note{cursor:default;font-size:12.5px;color:var(--muted);padding:8px 12px}
 .rs-pin{width:28px!important;height:28px!important;margin:-28px 0 0 -14px!important;background:none;border:0}
 .rs-pin span{display:block;width:28px;height:28px;border-radius:50% 50% 50% 0;background:#0F4C4A;transform:rotate(-45deg);border:3px solid #7FC4BB;box-shadow:0 3px 8px rgba(0,0,0,.35)}
 
@@ -243,6 +240,7 @@ footer .cols b{display:block;color:var(--ink);font-size:12.5px;letter-spacing:.1
 .fab svg{width:26px;height:26px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;z-index:40}
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -332,7 +330,7 @@ footer .cols b{display:block;color:var(--ink);font-size:12.5px;letter-spacing:.1
         <div class="col">
           <div class="field" id="f-from">
             <label for="from" data-i18n="from">Pickup</label>
-            <div class="inwrap"><svg aria-hidden="true"><use href="#i-pin"/></svg><input id="from" autocomplete="street-address" data-i18n-ph="from_ph" placeholder="e.g. Uttara Sector 7"></div>
+            <div class="inwrap"><svg aria-hidden="true"><use href="#i-pin"/></svg><input id="from" data-i18n-ph="from_ph" placeholder="e.g. Uttara Sector 7" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="ac-from" autocomplete="off"><ul class="ac" id="ac-from" role="listbox" hidden></ul></div>
             <span class="errmsg" aria-live="polite"></span>
           </div>
           <div class="pin">
@@ -357,7 +355,7 @@ footer .cols b{display:block;color:var(--ink);font-size:12.5px;letter-spacing:.1
           </div>
           <div class="field" id="f-to">
             <label for="to" data-i18n="to">Destination</label>
-            <div class="inwrap"><svg aria-hidden="true"><use href="#i-flag"/></svg><input id="to" data-i18n-ph="to_ph" placeholder="e.g. Shahjalal Airport"></div>
+            <div class="inwrap"><svg aria-hidden="true"><use href="#i-flag"/></svg><input id="to" data-i18n-ph="to_ph" placeholder="e.g. Shahjalal Airport" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="ac-to" autocomplete="off"><ul class="ac" id="ac-to" role="listbox" hidden></ul></div>
             <span class="errmsg" aria-live="polite"></span>
           </div>
           <div class="grid2">
@@ -580,14 +578,14 @@ const T = {
     pin_toggle:'ম্যাপে পিকআপের সঠিক জায়গা দিন', locate:'আমার লোকেশন', map_help:'যেখান থেকে ড্রাইভার আপনাকে নেবেন, ম্যাপের সেখানে ট্যাপ করুন।',
     fallback_help:'Google Maps খুলে পিকআপের জায়গায় পিন দিন, Share চাপুন আর লিংকটি এখানে পেস্ট করুন।', maplink_ph:'Google Maps লিংক', open_gmaps:'Google Maps খুলুন',
     name_ph:'যেমন: তানভীর আহমেদ', phone:'আপনার হোয়াটসঅ্যাপ নম্বর', phone_ph:'01XXXXXXXXX', err_phone:'সঠিক হোয়াটসঅ্যাপ নম্বর দিন', pin_set:'✓ পিন দেওয়া হয়েছে', loc_fail:'লোকেশন পাওয়া যায়নি। ম্যাপে ট্যাপ করুন।',
-    m_phone:'হোয়াটসঅ্যাপ', m_pin:'পিকআপ পিন',
+    m_phone:'হোয়াটসঅ্যাপ', m_pin:'পিকআপ পিন', m_dpin:'ড্রপ লোকেশন', ac_none:'কিছু পাওয়া যায়নি। নিজের মতো লিখুন।',
     err_from:'পিকআপের ঠিকানা লিখুন', err_to:'গন্তব্য লিখুন', err_start:'শুরুর তারিখ দিন', err_end:'ফেরার তারিখ শুরুর পরে হতে হবে',
     copied:'কপি হয়েছে। হোয়াটসঅ্যাপে পেস্ট করুন।', copy_fail:'কপি হয়নি। নিচের নম্বরে মেসেজ করুন।', fix:'লাল চিহ্নিত ঘরগুলো পূরণ করুন',
     m_hi:'আসসালামু আলাইকুম Rentsure, ভাড়া জানতে চাই।', m_trip:'ট্রিপ', m_from:'পিকআপ', m_to:'গন্তব্য', m_dates:'তারিখ', m_at:'পিকআপ', m_pax:'যাত্রী', m_bags:'ব্যাগ', m_veh:'গাড়ি', m_name:'নাম', m_notes:'নোট'
   }
 };
 const EN_EXTRA = {ac:'AC', driver:'Driver', or_similar:'or similar', seats:'seats', bags_s:'bags', choose:'Choose this car', chosen:'Selected', too_small:'Too small for your group',
-  err_phone:'Add a valid WhatsApp number', pin_set:'✓ Pin added', loc_fail:'Could not get your location. Tap the map instead.', m_phone:'WhatsApp', m_pin:'Pickup pin',
+  err_phone:'Add a valid WhatsApp number', pin_set:'✓ Pin added', loc_fail:'Could not get your location. Tap the map instead.', m_phone:'WhatsApp', m_pin:'Pickup pin', m_dpin:'Drop location', ac_none:'No match. Just type the address.',
   err_from:'Add a pickup address', err_to:'Add a destination', err_start:'Pick a start date', err_end:'Return date must be after the start date',
   copied:'Copied. Paste it into WhatsApp.', copy_fail:'Copy failed. Message us at the number below.', fix:'Fill in the fields marked in red',
   m_hi:'Hi Rentsure, I would like a price for this trip.', m_trip:'Trip', m_from:'Pickup', m_to:'Destination', m_dates:'Dates', m_at:'pickup', m_pax:'Passengers', m_bags:'Bags', m_veh:'Vehicle', m_name:'Name', m_notes:'Notes'};
@@ -610,24 +608,54 @@ let map=null, marker=null, mapBroken=false;
 function pinLink(){ if(state.pin) return `https://maps.google.com/?q=${state.pin.lat.toFixed(6)},${state.pin.lng.toFixed(6)}`; const l=$('#maplink').value.trim(); return l||''; }
 function pinStatus(){ $('#pin-status').textContent = pinLink()? t('pin_set') : ''; }
 function showFallback(){ if(mapBroken) return; mapBroken=true; $('#map-wrap').hidden=true; $('#map-help').hidden=true; $('#pin-fallback').hidden=false; }
-function setPin(lat,lng,zoom){ state.pin={lat,lng}; if(map){ if(!marker) marker=L.marker([lat,lng],{icon:L.divIcon({className:'rs-pin',html:'<span></span>'}),draggable:true}).addTo(map).on('dragend',e=>{const p=e.target.getLatLng(); state.pin={lat:p.lat,lng:p.lng}; pinStatus(); update();}); else marker.setLatLng([lat,lng]); if(zoom) map.setView([lat,lng],zoom); } pinStatus(); update(); }
+function setPin(lat,lng,zoom){ state.pin={lat,lng}; if(map){ if(!marker) marker=L.marker([lat,lng],{icon:L.divIcon({className:'rs-pin',html:'<span></span>'}),draggable:true}).addTo(map).on('dragend',e=>{const p=e.target.getLatLng(); state.pin={lat:p.lat,lng:p.lng}; pinStatus(); update(); fillFromPin(p.lat,p.lng);}); else marker.setLatLng([lat,lng]); if(zoom) map.setView([lat,lng],zoom); } pinStatus(); update(); }
 function initMap(){
   if(map||mapBroken) return;
   if(typeof L==='undefined'){ showFallback(); return; }
   try{
     map=L.map('map',{zoomControl:true,attributionControl:true}).setView(state.pin?[state.pin.lat,state.pin.lng]:[23.8103,90.4125], state.pin?15:12);
     let loaded=0;
-    const tiles=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'});
+    const tiles=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:20,subdomains:'abcd',attribution:'© OpenStreetMap © CARTO'});
     tiles.on('tileload',()=>loaded++);
     tiles.on('tileerror',()=>{ if(!loaded) showFallback(); });
     tiles.addTo(map);
     setTimeout(()=>{ if(!loaded) showFallback(); },6000);
-    map.on('click',e=>setPin(e.latlng.lat,e.latlng.lng));
+    map.on('click',e=>{setPin(e.latlng.lat,e.latlng.lng); fillFromPin(e.latlng.lat,e.latlng.lng);});
     if(state.pin) setPin(state.pin.lat,state.pin.lng);
   }catch(e){ showFallback(); }
 }
 $('#pin-toggle').addEventListener('click',()=>{ const p=$('#pin-panel'); p.hidden=!p.hidden; $('#pin-toggle').setAttribute('aria-expanded',String(!p.hidden)); if(!p.hidden){ initMap(); setTimeout(()=>map&&map.invalidateSize(),50); } });
-$('#locate').addEventListener('click',()=>{ if(!navigator.geolocation){ toast(t('loc_fail')); return; } navigator.geolocation.getCurrentPosition(p=>setPin(p.coords.latitude,p.coords.longitude,16),()=>toast(t('loc_fail')),{enableHighAccuracy:true,timeout:10000}); });
+$('#locate').addEventListener('click',()=>{ if(!navigator.geolocation){ toast(t('loc_fail')); return; } navigator.geolocation.getCurrentPosition(p=>{setPin(p.coords.latitude,p.coords.longitude,16); fillFromPin(p.coords.latitude,p.coords.longitude,true);},()=>toast(t('loc_fail')),{enableHighAccuracy:true,timeout:10000}); });
+
+/* place suggestions: Photon (OpenStreetMap data), limited to Bangladesh, biased to Dhaka */
+const PIN_SVG='<svg aria-hidden="true"><use href="#i-pin"/></svg>';
+function placeLabel(p){ const q=p.properties||{}; const main=q.name||[q.housenumber,q.street].filter(Boolean).join(' ')||q.city||'';
+  const sub=[q.street&&q.name?q.street:'',q.district||q.locality||'',q.city||q.county||'',q.state&&q.state!==q.city?q.state:''].filter((v,i,a)=>v&&v!==main&&a.indexOf(v)===i).join(', ');
+  return {main,sub}; }
+function fillFromPin(lat,lng,force){ const f=$('#from'); if(f.value.trim()&&!force) return;
+  fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}&limit=1`).then(r=>r.json()).then(j=>{ const p=j.features&&j.features[0]; if(!p) return; const l=placeLabel(p); f.value=[l.main,l.sub].filter(Boolean).join(', '); store(); update(); }).catch(()=>{}); }
+function autocomplete(id,onPick){
+  const inp=$('#'+id), list=$('#ac-'+id); let timer=null, ctl=null, items=[], idx=-1;
+  const close=()=>{ list.hidden=true; inp.setAttribute('aria-expanded','false'); idx=-1; };
+  const render=()=>{ list.innerHTML = items.length? items.map((p,i)=>{ const l=placeLabel(p); return `<li role="option" id="${id}-o${i}" aria-selected="${i===idx}">${PIN_SVG}<span><b>${esc(l.main)}</b>${l.sub?`<small>${esc(l.sub)}</small>`:''}</span></li>`; }).join('') : `<li class="ac-note">${t('ac_none')}</li>`;
+    list.hidden=false; inp.setAttribute('aria-expanded','true'); inp.setAttribute('aria-activedescendant', idx>=0? `${id}-o${idx}` : ''); };
+  const pick=i=>{ const p=items[i]; if(!p) return; const l=placeLabel(p); inp.value=[l.main,l.sub].filter(Boolean).join(', '); const [lng,lat]=p.geometry.coordinates; close(); onPick(lat,lng); store(); update(); };
+  inp.addEventListener('input',()=>{ clearTimeout(timer); const q=inp.value.trim(); if(q.length<2){ close(); return; }
+    timer=setTimeout(()=>{ if(ctl) ctl.abort(); ctl=new AbortController();
+      fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=23.8103&lon=90.4125&limit=6&bbox=88.0,20.5,92.8,26.7`,{signal:ctl.signal})
+        .then(r=>r.json()).then(j=>{ items=(j.features||[]); idx=-1; if(document.activeElement===inp) render(); }).catch(()=>{}); },250); });
+  inp.addEventListener('keydown',e=>{ if(list.hidden||!items.length) return;
+    if(e.key==='ArrowDown'){ e.preventDefault(); idx=(idx+1)%items.length; render(); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); idx=(idx-1+items.length)%items.length; render(); }
+    else if(e.key==='Enter'&&idx>=0){ e.preventDefault(); pick(idx); }
+    else if(e.key==='Escape'){ close(); } });
+  list.addEventListener('mousedown',e=>{ const li=e.target.closest('li[role=option]'); if(!li) return; e.preventDefault(); pick(+li.id.split('-o')[1]); });
+  inp.addEventListener('blur',()=>setTimeout(close,120));
+}
+function esc(v){ return String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+autocomplete('from',(lat,lng)=>{ const p=$('#pin-panel'); if(p.hidden){ p.hidden=false; $('#pin-toggle').setAttribute('aria-expanded','true'); } initMap(); setTimeout(()=>{ if(map){ map.invalidateSize(); } setPin(lat,lng,16); },60); });
+autocomplete('to',(lat,lng)=>{ state.dest={lat,lng}; });
+$('#to').addEventListener('input',()=>{ state.dest=null; });
 
 function saveQuote(){ if(!QUOTE_ENDPOINT) return; const v=VEHICLES.find(x=>x.id===state.veh);
   const row={lang:state.lang,trip:state.trip,from:$('#from').value.trim(),to:$('#to').value.trim(),pin:pinLink(),start:$('#start').value,end:state.trip==='airport'?'':$('#end').value,time:$('#time').value,passengers:state.pax,bags:state.bags,vehicle:v.en,name:$('#name').value.trim(),phone:$('#phone').value.trim(),notes:$('#notes').value.trim(),source:leadSource(),device:/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',company:$('#company').value};
@@ -703,6 +731,7 @@ function message(){
     `${t('m_from')}: ${$('#from').value.trim()}`,
     ...(pinLink()? [`${t('m_pin')}: ${pinLink()}`] : []),
     `${t('m_to')}: ${$('#to').value.trim()}`,
+    ...(state.dest? [`${t('m_dpin')}: https://maps.google.com/?q=${state.dest.lat.toFixed(6)},${state.dest.lng.toFixed(6)}`] : []),
     `${t('m_dates')}: ${dates}${$('#time').value? ', '+t('m_at')+' '+$('#time').value:''}`,
     `${t('m_pax')}: ${state.pax} · ${t('m_bags')}: ${state.bags}`,
     `${t('m_veh')}: ${vName(v)} (${v.seats} ${t('seats')})`];
