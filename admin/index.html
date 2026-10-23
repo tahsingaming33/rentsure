@@ -476,6 +476,7 @@ function openDrawer(id, keep){
         <div class="status-pick" id="d-status">${STATUSES.map(s => `<button type="button" class="${s.id}" data-s="${s.id}" aria-pressed="${q.status === s.id}">${s.label}</button>`).join('')}</div>
       </div>
       <div class="fld price"><label for="d-price">Quoted price</label><div class="price"><span>৳</span><input id="d-price" inputmode="numeric" value="${esc(q.quotedPrice)}" placeholder="e.g. 12500"></div></div>
+      <div class="actions"><button class="btn btn-wa" type="button" id="d-sendq"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>Send quote on WhatsApp</button></div>
       <div class="fld"><label for="d-notes">Internal notes</label><textarea id="d-notes" rows="3" placeholder="Driver assigned, advance received, follow-up date…">${esc(q.adminNotes)}</textarea></div>
       <div class="d-sec"><h3>Lead info</h3><dl class="kv"><dt>Source</dt><dd>${esc(cap(q.source || 'direct'))}</dd><dt>Device</dt><dd>${cap(q.device || '')}</dd>${q.firstReplyAt ? `<dt>First reply</dt><dd>${dur((new Date(q.firstReplyAt) - new Date(q.createdAt))/6e4)} after request</dd>` : ''}</dl></div>
       <div class="d-sec"><h3>History</h3><ul class="timeline">${(q.history || []).slice().reverse().map(h => `<li><span class="dot"></span>${cap(h.status)}<span class="when">${new Date(h.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'})}</span></li>`).join('')}</ul></div>
@@ -487,6 +488,18 @@ function openDrawer(id, keep){
   $('#d-copy').onclick = () => { try { navigator.clipboard.writeText(q.phone).then(() => toast('Number copied'), () => toast(q.phone)); } catch(e){ toast(q.phone); } };
   $('#d-wa').onclick = e => { if (mode === 'demo') { e.preventDefault(); toast('Demo data: there is no real customer to message.'); } };
   $('#d-save').onclick = () => save(q.id, {status: pending, quotedPrice: $('#d-price').value.trim(), adminNotes: $('#d-notes').value});
+  $('#d-sendq').onclick = () => {
+    const price = $('#d-price').value.replace(/[^\d]/g, '');
+    if (!price) { toast('Type the price first'); $('#d-price').focus(); return; }
+    if (mode === 'demo') { toast('Demo data: there is no real customer to message.'); return; }
+    const tk = Number(price).toLocaleString('en-IN');
+    const when = dates + (q.time ? (q.lang === 'bn' ? `, পিকআপ ${fmtTime(q.time)}` : `, pickup ${fmtTime(q.time)}`) : '');
+    const msg = q.lang === 'bn'
+      ? `আসসালামু আলাইকুম ${q.name || ''}, Rentsure থেকে বলছি।\n\nআপনার ট্রিপের কোটেশন:\n• ${q.from} → ${q.to}\n• ${when}\n• ${q.vehicle}, ড্রাইভারসহ · ${q.passengers} জন\n\nমোট ভাড়া: ৳${tk}\n\nকনফার্ম করতে "হ্যাঁ" লিখে রিপ্লাই দিন। কোনো প্রশ্ন থাকলে জানাবেন।`
+      : `Assalamu alaikum ${q.name || ''}, this is Rentsure.\n\nYour trip quote:\n• ${q.from} → ${q.to}\n• ${when}\n• ${q.vehicle} with driver · ${q.passengers} ${q.passengers == 1 ? 'person' : 'people'}\n\nTotal: ৳${tk}\n\nReply "YES" to confirm the booking. Any questions, just ask.`;
+    window.open(`https://wa.me/${waNumber(q.phone)}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
+    save(q.id, {status: (pending === 'booked' ? 'booked' : 'quoted'), quotedPrice: price, adminNotes: $('#d-notes').value});
+  };
   const del = $('#d-del'); let armed = false;
   del.onclick = () => { if (!armed) { armed = true; del.textContent = 'Tap again to delete'; setTimeout(() => { armed = false; del.textContent = 'Delete'; }, 4000); return; } remove(q.id); };
   d.hidden = false; $('#scrim').hidden = false;
