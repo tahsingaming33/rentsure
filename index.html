@@ -149,6 +149,7 @@ nav.links a:hover{color:var(--ink)}
 .pin-fallback{display:flex;flex-direction:column;gap:8px}
 .pin-fallback .btn{padding:10px 14px;font-size:14px}
 .leaflet-container{font:12px var(--body);background:#E8EEF0}
+.leaflet-tile-pane{filter:saturate(.8) contrast(1.02)}
 .leaflet-bar{border:0!important;border-radius:10px!important;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.18)!important}
 .leaflet-bar a{width:34px!important;height:34px!important;line-height:34px!important;color:#0B1F1D!important;font:600 18px var(--body)!important}
 .leaflet-control-attribution{font-size:10px}
@@ -615,7 +616,7 @@ function initMap(){
   try{
     map=L.map('map',{zoomControl:true,attributionControl:true}).setView(state.pin?[state.pin.lat,state.pin.lng]:[23.8103,90.4125], state.pin?15:12);
     let loaded=0;
-    const tiles=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:20,subdomains:'abcd',attribution:'© OpenStreetMap © CARTO'});
+    const tiles=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap',referrerPolicy:'strict-origin-when-cross-origin'});
     tiles.on('tileload',()=>loaded++);
     tiles.on('tileerror',()=>{ if(!loaded) showFallback(); });
     tiles.addTo(map);
