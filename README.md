@@ -19,4 +19,4 @@ Tip: open the admin on your phone and use "Add to Home Screen". It opens like an
 
 ## Notes
 - Spam protection: hidden honeypot field and max 8 requests per 10 minutes per visitor.
-- WhatsApp number used on the site: 01940295660 (sample). Replace in `index.html` when the real number is ready.
+- WhatsApp number used on the site: 01403009455 (wa.me/8801403009455).
